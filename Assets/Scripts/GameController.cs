@@ -9,6 +9,7 @@ public class Player {
     public Text text;
     public Button button;
     public Sprite playerImage;
+    public UnityEngine.Rendering.Universal.Light2D light2D;
 
     public Animator animator;
 
