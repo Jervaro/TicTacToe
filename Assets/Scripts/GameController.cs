@@ -8,18 +8,20 @@ public class Player {
     public Image panel;
     public Text text;
     public Button button;
+    public Sprite playerImage;
+
+    public Animator animator;
 
 }
 
 [System.Serializable] 
 public class PlayerColor {
     public Color panelColor;
-    public Color textColor;
 
 }
 
 public class GameController : MonoBehaviour {
-    public Text[] buttonList;
+    public GridSpace[] gridSpaceList;
     public GameObject gameOverPanel;
     public Text gameOverText;
     public GameObject restartButton;
@@ -34,8 +36,8 @@ public class GameController : MonoBehaviour {
     private int moveCount;
 
     void SetGameControllReferenceOnButtons(){
-        for(int i = 0; i < buttonList.Length; i++){
-            buttonList[i].GetComponentInParent<GridSpace>().SetGameControllReference(this);
+        for(int i = 0; i < gridSpaceList.Length; i++){
+            gridSpaceList[i].SetGameControllReference(this);
         }
     }
 
@@ -49,7 +51,7 @@ public class GameController : MonoBehaviour {
 
     public void SetStartingSide(string startingSide){
         playerSide = startingSide;
-        if(playerSide == "X"){
+        if(playerSide == "Capricorn"){
             SetPlayerColors(playerX, playerO);
         }
         else{
@@ -62,39 +64,47 @@ public class GameController : MonoBehaviour {
         return playerSide;
     }
 
+    public Sprite GetPlayerSideImage(){
+        if (playerSide == "Capricorn") {
+            return playerX.playerImage;
+        } else {
+            return playerO.playerImage;
+        }
+    }
+
     public void EndTurn(){
         moveCount++;
 
         // Checks the win for the first row
-        if(buttonList [0].text == playerSide && buttonList [1].text == playerSide && buttonList [2].text == playerSide){
+        if(gridSpaceList [0].text == playerSide && gridSpaceList [1].text == playerSide && gridSpaceList [2].text == playerSide){
             GameOver(playerSide);
         }
         // Checks the win for the second row
-        else if(buttonList [3].text == playerSide && buttonList [4].text == playerSide && buttonList [5].text == playerSide){
+        else if(gridSpaceList [3].text == playerSide && gridSpaceList [4].text == playerSide && gridSpaceList [5].text == playerSide){
             GameOver(playerSide);
         }
         // Checks the win for the third row
-        else if(buttonList [6].text == playerSide && buttonList [7].text == playerSide && buttonList [8].text == playerSide){
+        else if(gridSpaceList [6].text == playerSide && gridSpaceList [7].text == playerSide && gridSpaceList [8].text == playerSide){
             GameOver(playerSide);
         }
         // Checks the win for the first column
-        else if(buttonList [0].text == playerSide && buttonList [3].text == playerSide && buttonList [6].text == playerSide){
+        else if(gridSpaceList [0].text == playerSide && gridSpaceList [3].text == playerSide && gridSpaceList [6].text == playerSide){
             GameOver(playerSide);
         }
         // Checks the win for the second column
-        else if(buttonList [1].text == playerSide && buttonList [4].text == playerSide && buttonList [7].text == playerSide){
+        else if(gridSpaceList [1].text == playerSide && gridSpaceList [4].text == playerSide && gridSpaceList [7].text == playerSide){
             GameOver(playerSide);
         }
         // Checks the win for the third column
-        else if(buttonList [2].text == playerSide && buttonList [5].text == playerSide && buttonList [8].text == playerSide){
+        else if(gridSpaceList [2].text == playerSide && gridSpaceList [5].text == playerSide && gridSpaceList [8].text == playerSide){
             GameOver(playerSide);
         }
         // Checks the win for the diagonal, left top to right bottom
-        else if(buttonList [0].text == playerSide && buttonList [4].text == playerSide && buttonList [8].text == playerSide){
+        else if(gridSpaceList [0].text == playerSide && gridSpaceList [4].text == playerSide && gridSpaceList [8].text == playerSide){
             GameOver(playerSide);
         }
         // Checks the win for the diagonal, right top to left bottom
-        else if(buttonList [2].text == playerSide && buttonList [4].text == playerSide && buttonList [6].text == playerSide){
+        else if(gridSpaceList [2].text == playerSide && gridSpaceList [4].text == playerSide && gridSpaceList [6].text == playerSide){
             GameOver(playerSide);
         }
         
@@ -105,8 +115,11 @@ public class GameController : MonoBehaviour {
     }
 
     void StartGame(){
+        
         SetBoardInteractable(true);
         SetPlayerButtons(false);
+        playerX.animator.enabled = false;
+        playerO.animator.enabled = false;
         startInfo.SetActive(false);
     }
 
@@ -117,6 +130,13 @@ public class GameController : MonoBehaviour {
         }
         else{
             SetGameOverText(winningPlayer + " Wins!");
+            if(winningPlayer == "Capricorn"){
+                SetPlayerColors(playerX, playerO);
+            }
+            else{
+                SetPlayerColors(playerO, playerX);
+            }
+            
         }
         SetBoardInteractable(false);
         restartButton.SetActive(true);
@@ -128,16 +148,18 @@ public class GameController : MonoBehaviour {
         restartButton.SetActive(false);
         startInfo.SetActive(true);
         SetPlayerButtons(true);
-        SetPlayerColorsInactive();
+        SetPlayerColorsActive();
+        playerX.animator.enabled = true;
+        playerO.animator.enabled = true;
         
-        for(int i = 0; i < buttonList.Length; i++){
-            buttonList[i].text = "";
+        for(int i = 0; i < gridSpaceList.Length; i++){
+            gridSpaceList[i].ResetGridSpace();
         }
     }
 
     void ChangeSides(){
-        playerSide = (playerSide == "X") ? "O" : "X";
-        if(playerSide == "X"){
+        playerSide = (playerSide == "Capricorn") ? "Libra" : "Capricorn";
+        if(playerSide == "Capricorn"){
             SetPlayerColors(playerX, playerO);
         }
         else{
@@ -153,17 +175,24 @@ public class GameController : MonoBehaviour {
     void SetPlayerColors (Player newPlayer, Player oldPlayer)
     {
         newPlayer.panel.color = activePlayerColor.panelColor;
-        newPlayer.text.color = activePlayerColor.textColor;
+        //newPlayer.text.color = activePlayerColor.textColor;
 
         oldPlayer.panel.color = inactivePlayerColor.panelColor;
-        oldPlayer.text.color = inactivePlayerColor.textColor;
+        //oldPlayer.text.color = inactivePlayerColor.textColor;
+    }
+
+    void SetPlayerColorsActive(){
+        playerX.panel.color = activePlayerColor.panelColor; 
+
+        playerO.panel.color = activePlayerColor.panelColor;
     }
 
     void SetPlayerColorsInactive(){
         playerX.panel.color = inactivePlayerColor.panelColor; 
-        playerX.text.color = inactivePlayerColor.textColor;
+        //playerX.text.color = inactivePlayerColor.textColor;
+
         playerO.panel.color = inactivePlayerColor.panelColor;
-        playerO.text.color = inactivePlayerColor.textColor;
+        //playerO.text.color = inactivePlayerColor.textColor;
     }
 
     void SetGameOverText(string value){
@@ -172,8 +201,8 @@ public class GameController : MonoBehaviour {
     }
 
     void SetBoardInteractable(bool toggle){
-        for(int i = 0; i < buttonList.Length; i++){
-            buttonList[i].GetComponentInParent<Button>().interactable = toggle;
+        for(int i = 0; i < gridSpaceList.Length; i++){
+            gridSpaceList[i].button.interactable = toggle;
         }
     }
 
