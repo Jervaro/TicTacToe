@@ -9,7 +9,7 @@ public class Player {
     public Text text;
     public Button button;
     public Sprite playerImage;
-    public UnityEngine.Rendering.Universal.Light2D light2D;
+    public GameObject light2D;
 
     public Animator animator;
 
@@ -54,9 +54,14 @@ public class GameController : MonoBehaviour {
         playerSide = startingSide;
         if(playerSide == "Capricorn"){
             SetPlayerColors(playerX, playerO);
+            playerX.light2D.SetActive(true);
+            playerO.light2D.SetActive(false);
+
         }
         else{
             SetPlayerColors(playerO, playerX);
+            playerO.light2D.SetActive(true);
+            playerX.light2D.SetActive(false);
         }
         StartGame();
     }
@@ -152,6 +157,9 @@ public class GameController : MonoBehaviour {
         SetPlayerColorsActive();
         playerX.animator.enabled = true;
         playerO.animator.enabled = true;
+
+        playerX.light2D.SetActive(true);
+        playerO.light2D.SetActive(true);
         
         for(int i = 0; i < gridSpaceList.Length; i++){
             gridSpaceList[i].ResetGridSpace();
@@ -162,9 +170,13 @@ public class GameController : MonoBehaviour {
         playerSide = (playerSide == "Capricorn") ? "Libra" : "Capricorn";
         if(playerSide == "Capricorn"){
             SetPlayerColors(playerX, playerO);
+            playerX.light2D.SetActive(true);
+            playerO.light2D.SetActive(false);
         }
         else{
             SetPlayerColors(playerO, playerX);
+            playerO.light2D.SetActive(true);
+            playerX.light2D.SetActive(false);
         }
     }
 
