@@ -122,7 +122,6 @@ public class GameController : MonoBehaviour {
     }
 
     void StartGame(){
-        
         SetBoardInteractable(true);
         SetPlayerButtons(false);
         playerX.animator.enabled = false;
@@ -150,6 +149,7 @@ public class GameController : MonoBehaviour {
     }
 
     public void RestartGame(){
+        stopParticleEffect();
         moveCount = 0;
         gameOverPanel.SetActive(false);
         restartButton.SetActive(false);
@@ -223,6 +223,11 @@ public class GameController : MonoBehaviour {
 
     void playParticleEffect(){
         winTextParticleSystem.Play();
+    }
+
+    void stopParticleEffect(){
+        winTextParticleSystem.Stop();
+        winTextParticleSystem.Clear();
     }
 
     
