@@ -27,6 +27,7 @@ public class GameController : MonoBehaviour {
     public Text gameOverText;
     public GameObject restartButton;
     public GameObject startInfo;
+    public ParticleSystem winTextParticleSystem;
 
     public Player playerX;
     public Player playerO;
@@ -211,12 +212,17 @@ public class GameController : MonoBehaviour {
     void SetGameOverText(string value){
         gameOverPanel.SetActive(true);
         gameOverText.text = value;
+        playParticleEffect();
     }
 
     void SetBoardInteractable(bool toggle){
         for(int i = 0; i < gridSpaceList.Length; i++){
             gridSpaceList[i].button.interactable = toggle;
         }
+    }
+
+    void playParticleEffect(){
+        winTextParticleSystem.Play();
     }
 
     
